@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     }
 
     char *asm_filename = argv[1];
-    int   len          = strlen(asm_filename);
+    int len  = strlen(asm_filename);
 
     if (len < 4 || strcmp(asm_filename + len - 4, ".asm") != 0) {
         fprintf(stderr, "Error: File must have .asm extension\n");
@@ -26,7 +26,8 @@ int main(int argc, char *argv[]) {
     hack_filename[len - 4] = '\0';
     strcat(hack_filename, ".hack");
     char label_buf[256] = {0};
-    /* ── Open files ── */
+
+    
     FILE *asm_file = fopen(asm_filename, "r");
     if (asm_file == NULL) {
         fprintf(stderr, "Error: Could not open asm file.\n");
