@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
 #include "parser.h"
 #include "codewriter.h"
 
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
   if (slash) strncpy(filename, slash + 1, 64);
   else strncpy(filename, asm_filepath, 64);
   filename[strlen(filename) - 4] = '\0';
+
   char buffer[100];
   char cleanbuffer[100];
 
@@ -42,45 +44,53 @@ int main(int argc, char *argv[])
   if (asm_file == NULL) {
     fprintf(stderr, "Error: could not open/create %s\n", asm_filepath);
   }
- 
-  
+
   while (fgets(buffer, sizeof(buffer), vm_file)) {
     strip_comments(buffer, cleanbuffer);
+    cleanbuffer[strcspn(cleanbuffer, "\n")] = '\0';
+
+    // skip empty or whitespace-only lines
+    int only_whitespace = 1;
+    for (int i = 0; cleanbuffer[i]; i++) {
+        if (cleanbuffer[i] != ' ' && cleanbuffer[i] != '\t') {
+            only_whitespace = 0;
+            break;
+        }
+    }
+    if (only_whitespace) continue;
+
     char *type = command_type(cleanbuffer);
     char arg1[32];
     char arg2[32];
+
     if (strcmp(type, "C_push") == 0 || strcmp(type, "C_pop") == 0) {
       return_arg1(cleanbuffer, arg1);
       return_arg2(cleanbuffer, arg2);
       Write_push_pop(type, arg1, arg2, asm_file, filename);
-  } else if (!strcmp(type, "C_label")) {
-    return_arg1(cleanbuffer,arg1);
-    write_label(asm_file,arg1);
-  } else if (!strcmp(type, "C_goto")) {
+    } else if (!strcmp(type, "C_label")) {
+      return_arg1(cleanbuffer, arg1);
+      write_label(asm_file, arg1);
+    } else if (!strcmp(type, "C_goto")) {
       return_arg1(cleanbuffer, arg1);
       write_goto(asm_file, arg1);
-  } else if (!strcmp(type, "C_if")) {
+    } else if (!strcmp(type, "C_if")) {
       return_arg1(cleanbuffer, arg1);
       write_ifgoto(asm_file, arg1);
-  } else if (!strcmp(type, "C_function")) {
+    } else if (!strcmp(type, "C_function")) {
       return_arg1(cleanbuffer, arg1);
       return_arg2(cleanbuffer, arg2);
       write_function(asm_file, arg1, arg2);
-  } else if (!strcmp(type, "C_call")) {
+    } else if (!strcmp(type, "C_call")) {
       return_arg1(cleanbuffer, arg1);
       return_arg2(cleanbuffer, arg2);
       write_call(asm_file, arg1, arg2);
-  } else if (!strcmp(type, "C_return")) {
+    } else if (!strcmp(type, "C_return")) {
       write_return(asm_file);
-  } else {
+    } else {
       write_arithmetic(type, asm_file);
-}
+    }
   }
+
   fclose(vm_file);
   fclose(asm_file);
-
-  
-  
 }
-
-

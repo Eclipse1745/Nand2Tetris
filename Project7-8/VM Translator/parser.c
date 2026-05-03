@@ -38,7 +38,7 @@ char *command_type(char *line) {
   if (strcmp(command, "pop") == 0) return "C_pop"; 
 
   // Branching commands
-  if (strcmp(command, "if") == 0) return "C_if";
+  if (strcmp(command, "if-goto") == 0) return "C_if";
   if (strcmp(command, "goto") == 0) return "C_goto";
   if (strcmp(command, "label") == 0) return "C_label";
 
