@@ -12,4 +12,7 @@ void return_arg1(char *line , char *arg1_buf);
 
 void return_arg2(char *line , char *arg2_buf);
 
+
+int is_empty(char *buffer);
+
 #endif 

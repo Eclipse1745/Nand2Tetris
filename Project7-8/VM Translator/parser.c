@@ -15,7 +15,14 @@ void strip_comments(char *input , char *output) {
   }
   *write = '\0';
 }
-
+int is_empty(char *cleanbuffer) {
+    for (int i = 0; cleanbuffer[i]; i++) {
+        if (cleanbuffer[i] != ' ' && cleanbuffer[i] != '\t') {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 
 char *command_type(char *line) {

@@ -397,7 +397,7 @@ void write_call(FILE *asm_file, char *function_name , char *num_arg) {
   fprintf(asm_file, "@LCL\n");
   fprintf(asm_file, "M=D\n");
 
-  fprintf(asm_file, "@%s", function_name); // transfer control
+  fprintf(asm_file, "@%s\n", function_name); // transfer control
   fprintf(asm_file, "0;JMP\n");
 
   fprintf(asm_file, "(%s$%d)\n", function_name , label_count); // declare a label for the return-address
